@@ -28,3 +28,82 @@
       }
     };
   ```
+ ### 类型
+  * 在js中采用import方式引入css文件，需要用css-loader、style-loader加载器解析
+  * 对于sass文件，需要安装node-sass sass-loader
+  ```
+    {
+    test: /\.(sass|scss)$/,
+    //loader: 'style-loader!css-loader!sass-loader'',
+    use: [
+      {
+        loader: 'style-loader',
+      },
+      {
+        loader: 'css-loader',
+        // options: {
+        //   minimize: true,
+        //   '-autoprefixer': true,
+        // },
+      },
+      // {
+      //   loader: 'postcss-loader',
+      // },
+      {
+        loader: 'sass-loader',
+      },
+    ]
+  }
+  ```
+  *　对于less文件，需要安装less less-loader
+  *  对于下一代js(比如es6、TypeScript)则需要babel加载器
+    安装 `npm install --save-dev babel-core babel-loader babel-preset-env babel-preset-react`
+    {
+      test: /\.(js|jsx)$/,
+      include:dirVars.staticRootDir+'/js/modules',
+      loader: 'babel-loader',
+      options:{
+        presets:[
+          "env"
+        ]
+      }
+    }
+    当然也可以创建个.babel文件
+  * 对于background中引用图片，或者html中img嵌入图片，则需要用到url-loader
+  ```
+    {
+      // 图片加载器，雷同file-loader，更适合图片，可以将较小的图片转成base64，减少http请求
+      // 如下配置，将小于10kb的图片转成base64码
+      test: /\.(png|jpg|gif)$/,
+      // include: dirVars.srcRootDir,
+      use: [{
+            //加载url-loader 同时安装 file-loader;
+            loader: 'url-loader',
+             // include:  __dirname+'/js/modules',
+            options: {
+              //小于10240K的图片文件转base64到css里,当然css文件体积更大;
+              limit: 10240,
+              //设置最终img路径;
+              name: 'cssAndImg/img/[name]-[hash:8].[ext]',
+              publicPath:"../../../"
+            }
+          },
+          {
+            //压缩图片(另一个压缩图片：image-webpack-loader);
+            loader: 'img-loader?minimize&optimizationLevel=5&progressive=true'
+          },
+    ]}
+  ```
+  * 图标加载需要用file-loader
+  ```
+     {
+      // 专供iconfont方案使用的，后面会带一串时间戳，需要特别匹配到
+      test: /\.(woff|woff2|svg|eot|ttf)\??.*$/,
+      // exclude: /glyphicons/,
+      // loader: 'file-loader?name=static/fonts/[name].[ext]',
+      loader: 'file-loader',
+      options: {
+        name: './fonts/[name].[hash].[ext]',
+      },
+    }
+  ```
